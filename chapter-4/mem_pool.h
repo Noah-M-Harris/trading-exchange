@@ -57,5 +57,12 @@ namespace Common {
                 return ret;
             }
 
+            auto deallocate(const T *elem) noexcept {
+                const auto elem_index = (reinterpret_cast<const ObjectBlock *>(elem) - &store_[0]);
+                ASSERT(elem_index >= 0 && static_cast<size_t>(elem_index) < store_.size(), "Element being deallocated does not belong in this Memory pool.");
+                ASSERT(!store_[elem_index].is_free, "Expected in-use ObjectBlock @ idx: " + std::to_string(elem_index));
+                store_[elem_index].is_free = true;
+            }
+
     };
 }
